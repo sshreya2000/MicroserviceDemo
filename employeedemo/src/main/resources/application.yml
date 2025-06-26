@@ -2,7 +2,8 @@ spring:
   application:
     name: employee-demo
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres1
+#    url: jdbc:postgresql://localhost:5432/postgres1
+    url: jdbc:postgresql://postgres:5432/postgres1
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -13,6 +14,20 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+#logging:
+#  level:
+#    root: DEBUG
+#    org:
+#      springframework:
+#        kafka: DEBUG
+#      confluent:
+#        kafka: DEBUG
 server:
   port: 8081
 
@@ -21,7 +36,8 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+#      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://eureka-server:8761/eureka
   instance:
     hostname: localhost
     prefer-ip-address: true

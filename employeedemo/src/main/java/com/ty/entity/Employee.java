@@ -2,7 +2,6 @@ package com.ty.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.stereotype.Indexed;
 
 @NoArgsConstructor
 @AllArgsConstructor
