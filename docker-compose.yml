@@ -1,0 +1,133 @@
+version: '3.8'
+
+services:
+  eureka-server:
+    image: ssshreya2000/eurekaserver
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - ms-network
+
+  api-gateway:
+    image: ssshreya2000/apigateway
+    container_name: api-gateway
+#    environment:
+#      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE= http://eureka-server:8761/eureka
+    ports:
+      - "9000:9000"
+    depends_on:
+      - eureka-server
+    networks:
+      - ms-network
+
+  employee-app:
+    image: ssshreya2000/employeeapp
+    container_name: employee-app
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      - eureka-server
+      - postgres
+      - kafka
+    networks:
+      - ms-network
+
+  notification-app:
+    image: ssshreya2000/notificationapp
+    container_name: notification-app
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      - eureka-server
+      - postgres
+      - kafka
+    networks:
+      - ms-network
+
+  leave-app:
+    image: ssshreya2000/leaveapp
+    container_name: leave-app
+    ports:
+      - "8084:8084"
+    depends_on:
+      - eureka-server
+      - postgres
+    networks:
+      - ms-network
+
+  postgres:
+    image: postgres:17
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: postgres1
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - ms-network
+
+#  zookeeper:
+#    image: bitnami/zookeeper:latest
+#    container_name: zookeeper
+#    environment:
+#      ALLOW_ANONYMOUS_LOGIN: yes
+#    ports:
+#      - "2181:2181"
+#    networks:
+#      - ms-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    ports:
+      - "2181:2181"
+    networks:
+      - ms-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9093
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+    networks:
+      - ms-network
+
+#  kafka:
+#    image: bitnami/kafka:latest
+#    container_name: kafka
+#    ports:
+#      - "9092:9092"
+#    environment:
+#      KAFKA_BROKER_ID: 1
+#      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+#      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092
+#      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+#      ALLOW_PLAINTEXT_LISTENER: yes
+#    depends_on:
+#      - zookeeper
+#    networks:
+#      - ms-network
+
+
+networks:
+  ms-network:
+    driver: bridge

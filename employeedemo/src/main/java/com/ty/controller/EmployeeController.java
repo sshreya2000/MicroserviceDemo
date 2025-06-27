@@ -9,8 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,7 +38,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}/leaves")
-    public  SuccessResponse getLeaves(@PathVariable int id) throws ExecutionException, InterruptedException {
+    public  SuccessResponse getLeaves(@PathVariable int id) throws InterruptedException {
         return SuccessResponse.builder()
                 .data(employeeService.fetchLeavesOfEmployee(id))
                 .message("Leaves for the employee")

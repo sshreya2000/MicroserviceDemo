@@ -5,7 +5,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "NOTIFICATIONMODULE")
+@FeignClient(name = "NOTIFICATION-MODULE")
 public interface NotificationClient {
 
     @PostMapping("/api/v1/notification/send-email")
