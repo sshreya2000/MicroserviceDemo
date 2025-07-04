@@ -8,7 +8,7 @@ WORKDIR /app
 COPY target/employeedemo-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose Eureka default port
-EXPOSE 8761
+EXPOSE 8081
 
 # Run the Spring Boot application
 ENTRYPOINT ["java", "-jar", "app.jar"]
